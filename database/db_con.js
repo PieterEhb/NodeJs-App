@@ -1,5 +1,5 @@
-const mysql = require('mysql2');
-const dotenv = require("dotenv");
+import mysql from 'mysql2';
+import dotenv from "dotenv";
 dotenv.config();
 
 const db_con = mysql
@@ -10,5 +10,4 @@ const db_con = mysql
     password: process.env.MYSQL_PASSWORD,
   })
   .promise();
-  
-  module.exports = db_con;
+  export { db_con as default };
