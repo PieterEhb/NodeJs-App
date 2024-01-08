@@ -1,15 +1,15 @@
 import express from "express";
 import {
   createNews,
-/*   deleteNote,
-  getAllNotes,
-  getSingleNote,
-  updateNote, */
+  deleteNews,
+  getAllNews,
+  getNews,
+  updateNews,
 } from "./controller.js";
 
 const router = express.Router();
 
-router.route("/").post(createNews);
-//router.route("/:id").get(getSingleNote).patch(updateNote).delete(deleteNote);
+router.route("/").get(getAllNews).post(createNews);
+router.route("/:id").get(getNews).put(updateNews).delete(deleteNews);
 
 export default router;

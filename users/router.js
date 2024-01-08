@@ -1,15 +1,15 @@
 import express from "express";
 import {
   createUser,
-  /* deleteNote,
-  getAllNotes,
-  getSingleNote,
-  updateNote, */
+  getAllUsers,
+  deleteUser,
+  getUser,
+  updateUser,
 } from "./controller.js";
 
 const router = express.Router();
 
-router.route("/").post(createUser);
-//router.route("/:id").get(getSingleNote).patch(updateNote).delete(deleteNote);
+router.route("/").get(getAllUsers).post(createUser);
+router.route("/:id").get(getUser).put(updateUser).delete(deleteUser);
 
 export default router;

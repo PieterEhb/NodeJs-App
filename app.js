@@ -12,8 +12,9 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 //api routes
-app.use("/user", usersRoute);
 app.use("/news", newsRoute);
+app.use("/user", usersRoute);
+
 
 app.get("/status", (req, res) => {
   res.json({ message: "Hello, World!" });
