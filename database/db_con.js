@@ -10,4 +10,5 @@ const db_con = mysql
     password: process.env.MYSQL_PASSWORD,
   })
   .promise();
+
   export { db_con as default };

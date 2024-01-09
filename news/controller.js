@@ -1,9 +1,8 @@
 import db_con from "../database/db_con.js";
 
 async function lookupNews(id) {
-  //let sql = "SELECT * FROM news WHERE id = ?"; for some reason the prepared statemnt is not working
-  let sql = `select * from news where id = ${id.id}`;
-  let [results] = await db_con.query(sql, [id]);
+  let sql = "SELECT * FROM news WHERE id = ?";
+  let [results] = await db_con.query(sql,[id]);
   return results[0];
 };
 
@@ -29,26 +28,27 @@ export const getAllNews = async function (req, res) {
 };
 
 export const getNews = async function (req, res) {
-  let newsId = req.params;
+  let newsId = parseInt(req.params.id);
   let news = await lookupNews(newsId);
   if (!news) return res.status(404).json({ message: "news post not found!" });
   return res.status(200).json(news);
 };
 
 export const updateNews = async function (req, res) {
-  let newsId = req.params;
+  let newsId = parseInt(req.params.id);
   let { title, content } = req.body;
   if (!title || !content || !newsId)
     return res.status(400).json({ message: "all fields are required" });
   let news = await lookupNews(newsId);
   if (!news) return res.status(404).json({ message: "news post not found!" });
-  let sql = "UPDATE news SET title = ?, content = ? where id = ?";
-  await db_con.query(sql, [title, content, userId]);
+  let sql = "UPDATE news SET title = ?, content = ? , updated_at = ? where id = ?";
+  let date = new Date();
+  await db_con.query(sql, [title, content, date.toISOString().slice(0, 19).replace('T', ' '), newsId]);
   return res.status(200).json({ message: "news has been updated" });
 };
 
 export const deleteNews = async function (req, res) {
-  let newsId = req.params;
+  let newsId = parseInt(req.params.id);
   if (!newsId)
     return res.status(400).json({ message: "all fields are required" });
   let news = await lookupNews(newsId);

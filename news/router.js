@@ -7,9 +7,9 @@ import {
   updateNews,
 } from "./controller.js";
 
-const router = express.Router();
+const newsRouter = express.Router();
 
-router.route("/").get(getAllNews).post(createNews);
-router.route("/:id").get(getNews).put(updateNews).delete(deleteNews);
+newsRouter.route("/").get(getAllNews).post(createNews);
+newsRouter.route("/:id").get(getNews).put(updateNews).delete(deleteNews);
 
-export default router;
+export default newsRouter;

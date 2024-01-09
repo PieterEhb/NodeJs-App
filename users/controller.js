@@ -12,7 +12,6 @@ export const createUser = async function (req, res) {
   let { username, password, email, firstname, lastname, phone } = req.body;
   let sql = "select id from users where username = ? or email = ?";
   let [results] = await db_con.query(sql, [username, email]);
-  //console.log(results);
   if (results.length != 0) {
     return res.status(500).json({ message: "username or email already used!" });
   } else {
@@ -37,14 +36,14 @@ export const getAllUsers = async function (req, res) {
 };
 
 export const getUser = async function (req, res) {
-  let userId = req.params;
+  let userId = parseInt(req.params.id)
   let user = await lookupUser(userId);
   if (!user) return res.status(404).json({ message: "user not found!" });
   return res.status(200).json(user);
 };
 
 export const updateUser = async function (req, res) {
-  let userId = req.params;
+  let userId = parseInt(req.params.id)
   let { firstname, lastname, phone } = req.body;
   if (!firstname || !lastname || !phone || !userId)
     return res.status(400).json({ message: "all fields are required" });
@@ -57,7 +56,7 @@ export const updateUser = async function (req, res) {
 };
 
 export const deleteUser = async function (req, res) {
-  let userId = req.params;
+  let userId = parseInt(req.params.id)
   if (!userId)
     return res.status(400).json({ message: "all fields are required" });
   let user = await lookupUser(userId);

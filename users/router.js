@@ -7,9 +7,9 @@ import {
   updateUser,
 } from "./controller.js";
 
-const router = express.Router();
+const userRouter = express.Router();
 
-router.route("/").get(getAllUsers).post(createUser);
-router.route("/:id").get(getUser).put(updateUser).delete(deleteUser);
+userRouter.route("/").get(getAllUsers).post(createUser);
+userRouter.route("/:id").get(getUser).put(updateUser).delete(deleteUser);
 
-export default router;
+export default userRouter;
