@@ -1,4 +1,10 @@
 import db_con from "../database/db_con.js";
+import { tryCatchWrapper } from "../middleware/tryCarchWrapper.js";
+
+/**
+ * @description Looks up news on id returns news object
+ */
+
 
 async function lookupNews(id) {
   let sql = "SELECT * FROM news WHERE id = ?";
@@ -6,7 +12,13 @@ async function lookupNews(id) {
   return results[0];
 };
 
-export const createNews = async function (req, res) {
+/**
+ * @description Create news post
+ * @route POST /news
+ */
+
+
+export const createNews = tryCatchWrapper(async function (req, res) {
   let { title, content, userId } = req.body;
   if (!title || !content || !userId) {
     return res.status(500).json({ message: "post is missing values" });
@@ -16,25 +28,40 @@ export const createNews = async function (req, res) {
   await db_con.query(sql, [title, content, userId]);
 
   return res.status(200).json({ message: "news post created" });
-};
+});
 
-export const getAllNews = async function (req, res) {
+/**
+ * @description Get All news posts
+ * @route GET /news
+ */
+
+export const getAllNews = tryCatchWrapper(async function (req, res) {
   let sql = "select * from news";
   let [results] = await db_con.query(sql);
   if (!results.lenght == 0)
     return res.status(204).json({ message: "empty list" });
 
   return res.status(200).json({ news: results });
-};
+});
 
-export const getNews = async function (req, res) {
+/**
+ * @description Get Single news post
+ * @route GET /news/:id
+ */
+
+export const getNews = tryCatchWrapper(async function (req, res) {
   let newsId = parseInt(req.params.id);
   let news = await lookupNews(newsId);
   if (!news) return res.status(404).json({ message: "news post not found!" });
   return res.status(200).json(news);
-};
+});
 
-export const updateNews = async function (req, res) {
+/**
+ * @description Update news post
+ * @route PUT /news/:id
+ */
+
+export const updateNews = tryCatchWrapper(async function (req, res) {
   let newsId = parseInt(req.params.id);
   let { title, content } = req.body;
   if (!title || !content || !newsId)
@@ -45,9 +72,14 @@ export const updateNews = async function (req, res) {
   let date = new Date();
   await db_con.query(sql, [title, content, date.toISOString().slice(0, 19).replace('T', ' '), newsId]);
   return res.status(200).json({ message: "news has been updated" });
-};
+});
 
-export const deleteNews = async function (req, res) {
+/**
+ * @description Delete news, can be only done if admin
+ * @route DELETE /news/:id
+ */
+
+export const deleteNews = tryCatchWrapper(async function (req, res) {
   let newsId = parseInt(req.params.id);
   if (!newsId)
     return res.status(400).json({ message: "all fields are required" });
@@ -58,4 +90,17 @@ export const deleteNews = async function (req, res) {
   await db_con.query(sql, [newsId]);
 
   return res.status(200).json({ message: "news post has been deleted" });
-};
+});
+
+/**
+ * @description Get news on title
+ * @route GET /news/search
+ */
+
+export const searchNewsPost = tryCatchWrapper(async function(req, res){
+  let filter = req.query;
+  let sql = "select * from news where title like CONCAT('%',?,'%')";
+  let [results]  = await db_con.query(sql, filter.title)
+  if(results.length == 0) return res.status(204).json({message: "empty list"});
+  return res.status(200).json({users: results})
+});
