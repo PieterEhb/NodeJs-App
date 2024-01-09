@@ -98,9 +98,18 @@ export const deleteNews = tryCatchWrapper(async function (req, res) {
  */
 
 export const searchNewsPost = tryCatchWrapper(async function(req, res){
-  let filter = req.query;
-  let sql = "select * from news where title like CONCAT('%',?,'%')";
-  let [results]  = await db_con.query(sql, filter.title)
+  let {title, limit, offset} = req.query;
+  let sql;
+  let querryVariables;
+  //let filter = req.query;
+  if(!limit || !offset){
+    sql = "select * from news where title like CONCAT('%',?,'%')";
+    querryVariables = [title];
+  }else{
+    sql = "select * from news where title like CONCAT('%',?,'%') LIMIT ? OFFSET ?";
+    querryVariables = [title, parseInt(limit), parseInt(offset)];
+  }
+  let [results]  = await db_con.query(sql, querryVariables)
   if(results.length == 0) return res.status(204).json({message: "empty list"});
-  return res.status(200).json({users: results})
+  return res.status(200).json({news: results})
 });

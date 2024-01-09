@@ -93,11 +93,13 @@ export const deleteUser = tryCatchWrapper(async function (req, res) {
     return res.status(400).json({ message: "all fields are required" });
   let user = await lookupUser(userId);
   if (!user) return res.status(404).json({ message: "user not found!" });
-
+if(user.username == req.username || req.role){
   let sql = "DELETE FROM users WHERE id = ?";
   await db_con.query(sql, [userId]);
 
   return res.status(200).json({ message: "user has been deleted" });
+}
+return res.status(403).json({ message: "not authorized to delete user" });
 });
 
 /**
