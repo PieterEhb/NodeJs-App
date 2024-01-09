@@ -9,7 +9,6 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 //middleware
-//app.use(bodyParser.json())
 app.use(express.json());
 
 //api routes
