@@ -1,7 +1,12 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import joi from 'joi'
 import db_con from "../database/db_con.js";
 import { tryCatchWrapper } from "../middleware/tryCarchWrapper.js";
+import { 
+  createUserSchema,
+  updateUserSchema
+} from "./userValidations.js";
 const saltRounds = 10;
 
 /**
@@ -20,10 +25,14 @@ async function lookupUser(id) {
  */
 
 export const createUser = tryCatchWrapper(async function (req, res) {
-  let { username, password, email, firstname, lastname, phone } = req.body;
-  if(!username || !password || !email){
-    return res.status(500).json({message: "atleast, username, password, email are requred to create account!"})
+  try{
+    let result = joi.assert(req.body, createUserSchema, {abortEarly: false});
   }
+  catch(err){
+    return  res.status(400).json(err.details);
+  }
+
+  let { username, password, email, firstname, lastname, phone } = req.body;
   let sql = "select id from users where username = ? or email = ?";
   let [results] = await db_con.query(sql, [username, email]);
   if (results.length != 0) {
@@ -71,6 +80,12 @@ export const getUser = tryCatchWrapper(async function (req, res) {
  */
 export const updateUser = tryCatchWrapper(async function (req, res) {
   let userId = parseInt(req.params.id);
+  try{
+    let result = joi.assert(req.body, updateUserSchema, {abortEarly: false});
+  }
+  catch(err){
+    return  res.status(400).json(err.details);
+  }
   let { firstname, lastname, phone } = req.body;
   if (!firstname || !lastname || !phone || !userId)
     return res.status(400).json({ message: "all fields are required" });
