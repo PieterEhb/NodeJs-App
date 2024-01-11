@@ -1,10 +1,13 @@
 import db_con from "../database/db_con.js";
 import { tryCatchWrapper } from "../middleware/tryCarchWrapper.js";
+import {
+  createNewsValidation,
+  updateNewsValidation
+} from "./newsValidation.js";
 
 /**
  * @description Looks up news on id returns news object
  */
-
 
 async function lookupNews(id) {
   let sql = "SELECT * FROM news WHERE id = ?";
@@ -17,13 +20,14 @@ async function lookupNews(id) {
  * @route POST /news
  */
 
-
 export const createNews = tryCatchWrapper(async function (req, res) {
-  let { title, content, userId } = req.body;
-  if (!title || !content || !userId) {
-    return res.status(500).json({ message: "post is missing values" });
+  try{
+    let validation = joi.assert(req.body, createNewsValidation, {abortEarly: false});
   }
-
+  catch(err){
+    return res.status(400).json(err.details);
+  }
+  let { title, content, userId } = req.body;
   let sql = "INSERT INTO news (title, content, user_id) VALUES(?,?,?)";
   await db_con.query(sql, [title, content, userId]);
 
@@ -62,10 +66,14 @@ export const getNews = tryCatchWrapper(async function (req, res) {
  */
 
 export const updateNews = tryCatchWrapper(async function (req, res) {
+  try{
+    let validation = joi.assert(req.body, updateNewsValidation, {abortEarly: false});
+  }
+  catch(err){
+    return res.status(400).json(err.details);
+  }
   let newsId = parseInt(req.params.id);
   let { title, content } = req.body;
-  if (!title || !content || !newsId)
-    return res.status(400).json({ message: "all fields are required" });
   let news = await lookupNews(newsId);
   if (!news) return res.status(404).json({ message: "news post not found!" });
   let sql = "UPDATE news SET title = ?, content = ? , updated_at = ? where id = ?";

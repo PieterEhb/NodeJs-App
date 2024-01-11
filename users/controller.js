@@ -26,7 +26,7 @@ async function lookupUser(id) {
 
 export const createUser = tryCatchWrapper(async function (req, res) {
   try{
-    let result = joi.assert(req.body, createUserSchema, {abortEarly: false});
+    let validation = joi.assert(req.body, createUserSchema, {abortEarly: false});
   }
   catch(err){
     return  res.status(400).json(err.details);
@@ -81,7 +81,7 @@ export const getUser = tryCatchWrapper(async function (req, res) {
 export const updateUser = tryCatchWrapper(async function (req, res) {
   let userId = parseInt(req.params.id);
   try{
-    let result = joi.assert(req.body, updateUserSchema, {abortEarly: false});
+    let validation = joi.assert(req.body, updateUserSchema, {abortEarly: false});
   }
   catch(err){
     return  res.status(400).json(err.details);
